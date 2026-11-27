@@ -15,7 +15,7 @@ export class StockfishEngine {
 
     this.starting = new Promise((resolve, reject) => {
       try {
-        this.worker = new Worker(`${BASE}engine/stockfish.js`);
+        this.worker = new Worker(`${BASE}engine/stockfish-19-lite-single.js`);
       } catch (error) {
         reject(error);
         return;
