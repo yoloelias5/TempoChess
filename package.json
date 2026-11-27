@@ -1,0 +1,20 @@
+{
+  "name": "tempochess-analysis",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "download-engine": "node scripts/download-engine.mjs",
+    "predev": "npm run download-engine",
+    "prebuild": "npm run download-engine",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "dependencies": {
+    "chess.js": "1.4.0"
+  },
+  "devDependencies": {
+    "vite": "6.4.1"
+  }
+}
