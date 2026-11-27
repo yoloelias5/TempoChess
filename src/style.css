@@ -135,3 +135,7 @@ footer b { color: #a7b6c1; font-weight: 600; margin-left: 4px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 .board { position: relative; }
 .best-arrow-layer { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none; overflow: visible; }
+
+.think-setting { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: -7px 0 16px; padding: 10px 11px; background: #202d38; border: 1px solid #2b3945; border-radius: 8px; }
+.think-setting label { color: #aab8c2; font-size: 10px; font-weight: 700; }
+.think-setting select { max-width: 150px; border: 1px solid #40515d; border-radius: 6px; padding: 7px 9px; color: #e8edf2; background: #111b23; font: inherit; font-size: 10px; }
