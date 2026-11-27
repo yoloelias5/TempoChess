@@ -28,6 +28,7 @@ let analysisBusy = false;
 let engineAvailable = true;
 let flipped = false;
 let pgnMode = false;
+let thinkTimeMs = 2000;
 
 app.innerHTML = `
   <header class="topbar">
@@ -256,7 +257,7 @@ async function playMove(from, to) {
   analysisBusy = true;
   setNote("Checking your move with Stockfish…");
   try {
-    const result = await engine.analyse(chess.fen(), 10);
+    const result = await engine.analyse(chess.fen(), thinkTimeMs);
     const afterWhite = scoreAsWhite(result);
     const moverSign = mover === "w" ? 1 : -1;
     const loss = Math.max(0, Math.round((lastWhiteEval - afterWhite) * moverSign));
@@ -360,7 +361,7 @@ async function analyseCurrent() {
   analysisBusy = true;
   setNote("Stockfish is analysing this position…");
   try {
-    const result = await engine.analyse(chess.fen(), 12);
+    const result = await engine.analyse(chess.fen(), thinkTimeMs);
     lastWhiteEval = scoreAsWhite(result);
     lastBestMove = result.bestMove;
     updateEvaluation(result);
@@ -445,12 +446,16 @@ document.querySelector("#undo").addEventListener("click", () => {
   analyseCurrent();
 });
 document.querySelector("#analyse").addEventListener("click", analyseCurrent);
+document.querySelector("#think-time").addEventListener("change", (event) => {
+  thinkTimeMs = Number(event.target.value) || 2000;
+  setNote("Thinking time set to " + (thinkTimeMs / 1000) + " second(s). Press Analyse position to apply it now.");
+});
 document.querySelector("#import-pgn").addEventListener("click", importPgn);
 
 renderBoard();
 renderMoves();
 updatePlayerCaptions();
-setNote("Starting Stockfish. The engine loads only when the page opens.");
+setNote("Starting Stockfish. The starting position will be analysed automatically.");
 engine.start().then(() => {
   statusEl.innerHTML = "<i></i> Stockfish ready";
   setNote("Stockfish is ready. Make a move or import a PGN.");
