@@ -69,7 +69,8 @@ app.innerHTML = `
           <div class="summary-card"><span>Position eval</span><strong id="eval-summary">0.0</strong></div>
           <div class="summary-card"><span>Engine depth</span><strong id="depth-summary">—</strong></div>
         </div>
-        <div class="best-move" id="best-move"><span class="best-icon">✦</span><div><small>ENGINE'S TOP MOVE</small><strong id="best-move-text">Waiting for analysis</strong></div></div>
+        <div class="best-move" id="best-move"><span class="best-icon">✦</span><div><small>ENGINE'S TOP MOVE</small><strong id="best-move-text">Analysing starting position…</strong></div></div>
+        <div class="think-setting"><label for="think-time">Stockfish thinking time</label><select id="think-time"><option value="500">0.5 seconds</option><option value="1000">1 second</option><option value="2000" selected>2 seconds</option><option value="3000">3 seconds</option><option value="5000">5 seconds</option><option value="10000">10 seconds</option></select></div>
         <div class="move-section">
           <div class="section-title"><strong>Moves</strong><span id="move-count">0 moves</span></div>
           <div class="move-list" id="move-list"><div class="empty-state">Make a move to start your review.</div></div>
