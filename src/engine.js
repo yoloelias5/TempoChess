@@ -61,7 +61,7 @@ export class StockfishEngine {
     };
   }
 
-  async analyse(fen, depth = 10) {
+  async analyse(fen, moveTimeMs = 2000) {
     await this.start();
     if (this.pending) {
       this.worker.postMessage("stop");
@@ -72,7 +72,7 @@ export class StockfishEngine {
     return new Promise((resolve) => {
       this.pending = { resolve };
       this.worker.postMessage(`position fen ${fen}`);
-      this.worker.postMessage(`go depth ${depth}`);
+      this.worker.postMessage(`go movetime ${Math.max(100, Math.min(30000, Number(moveTimeMs) || 2000))}`);
     });
   }
 
