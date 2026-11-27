@@ -134,6 +134,68 @@ function renderBoard() {
       boardEl.append(button);
     }
   }
+  renderBestMoveArrow();
+}
+
+function renderBestMoveArrow() {
+  if (!lastBestMove || lastBestMove === "(none)" || lastBestMove.length < 4) return;
+  const from = lastBestMove.slice(0, 2);
+  const to = lastBestMove.slice(2, 4);
+  const squarePoint = (square) => {
+    const file = files.indexOf(square[0]);
+    const rank = Number(square[1]);
+    const col = flipped ? 7 - file : file;
+    const row = flipped ? rank - 1 : 8 - rank;
+    return { x: (col + 0.5) * 100, y: (row + 0.5) * 100 };
+  };
+  const start = squarePoint(from);
+  const end = squarePoint(to);
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("class", "best-arrow-layer");
+  svg.setAttribute("viewBox", "0 0 800 800");
+  svg.setAttribute("aria-hidden", "true");
+  const defs = document.createElementNS(svgNS, "defs");
+  const marker = document.createElementNS(svgNS, "marker");
+  marker.setAttribute("id", "best-arrow-head");
+  marker.setAttribute("markerWidth", "7");
+  marker.setAttribute("markerHeight", "7");
+  marker.setAttribute("refX", "5");
+  marker.setAttribute("refY", "3");
+  marker.setAttribute("orient", "auto");
+  const head = document.createElementNS(svgNS, "path");
+  head.setAttribute("d", "M0,0 L6,3 L0,6 Z");
+  head.setAttribute("fill", "#f4d35e");
+  marker.append(head);
+  defs.append(marker);
+  svg.append(defs);
+  const line = document.createElementNS(svgNS, "line");
+  line.setAttribute("x1", String(start.x));
+  line.setAttribute("y1", String(start.y));
+  line.setAttribute("x2", String(end.x));
+  line.setAttribute("y2", String(end.y));
+  line.setAttribute("stroke", "#f4d35e");
+  line.setAttribute("stroke-width", "13");
+  line.setAttribute("stroke-linecap", "round");
+  line.setAttribute("opacity", ".9");
+  line.setAttribute("marker-end", "url(#best-arrow-head)");
+  svg.append(line);
+  boardEl.append(svg);
+}
+
+function bestMoveLabel(uci) {
+  if (!uci || uci === "(none)" || uci.length < 4) return "No legal move";
+  try {
+    const position = new Chess(chess.fen());
+    const move = position.move({
+      from: uci.slice(0, 2),
+      to: uci.slice(2, 4),
+      promotion: uci[4] || "q"
+    });
+    return move ? move.san : uci;
+  } catch {
+    return uci;
+  }
 }
 
 function onSquareClick(square) {
@@ -227,8 +289,6 @@ function setLastMoveMark(mark, detail) {
   row.classification = mark;
   row.detail = detail;
   renderMoves();
-  const [label] = labels[mark] || labels.good;
-  document.querySelector("#best-move-text").textContent = label;
 }
 
 function renderMoves() {
@@ -281,7 +341,8 @@ function updateEvaluation(result) {
   document.querySelector("#eval-label").textContent = label;
   document.querySelector("#eval-summary").textContent = label;
   document.querySelector("#depth-summary").textContent = result.depth || "—";
-  document.querySelector("#best-move-text").textContent = result.bestMove || "No move";
+  document.querySelector("#best-move-text").textContent = bestMoveLabel(result.bestMove);
+  renderBoard();
 }
 
 function updatePlayerCaptions() {
@@ -303,7 +364,8 @@ async function analyseCurrent() {
     lastWhiteEval = scoreAsWhite(result);
     lastBestMove = result.bestMove;
     updateEvaluation(result);
-    document.querySelector("#best-move-text").textContent = result.bestMove || "No legal move";
+    document.querySelector("#best-move-text").textContent = bestMoveLabel(result.bestMove);
+    renderBoard();
     setNote(`Analysis complete at depth ${result.depth}. Engine is ready for your next move.`);
   } catch (error) {
     setNote(error.message || "Could not analyse this position.");
